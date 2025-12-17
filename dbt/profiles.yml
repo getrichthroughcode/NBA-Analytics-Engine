@@ -1,0 +1,24 @@
+nba_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('DATABASE_HOST', 'localhost') }}"
+      user: "{{ env_var('DATABASE_USER', 'postgres') }}"
+      password: "{{ env_var('DATABASE_PASSWORD', 'postgres') }}"
+      port: "{{ env_var('DATABASE_PORT', '5432') | int }}"
+      dbname: "{{ env_var('DATABASE_NAME', 'nba_analytics') }}"
+      schema: public
+      threads: 4
+      keepalives_idle: 0
+    
+    prod:
+      type: postgres
+      host: "{{ env_var('DATABASE_HOST') }}"
+      user: "{{ env_var('DATABASE_USER') }}"
+      password: "{{ env_var('DATABASE_PASSWORD') }}"
+      port: "{{ env_var('DATABASE_PORT') | int }}"
+      dbname: "{{ env_var('DATABASE_NAME') }}"
+      schema: public
+      threads: 8
+      keepalives_idle: 0

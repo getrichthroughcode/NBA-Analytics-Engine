@@ -1,0 +1,49 @@
+version: 2
+
+sources:
+  - name: staging
+    description: "Staging tables with raw NBA data from the API"
+    database: nba_analytics
+    schema: staging
+    tables:
+      - name: player_game_stats_raw
+        description: "Raw player game statistics from NBA API"
+        columns:
+          - name: game_id
+            description: "Unique game identifier"
+            tests:
+              - not_null
+          - name: player_id
+            description: "Unique player identifier"
+            tests:
+              - not_null
+          - name: team_id
+            description: "Team identifier"
+            tests:
+              - not_null
+      
+      - name: team_game_stats_raw
+        description: "Raw team game statistics from NBA API"
+        columns:
+          - name: game_id
+            description: "Unique game identifier"
+            tests:
+              - not_null
+          - name: team_id
+            description: "Team identifier"
+            tests:
+              - not_null
+
+  - name: dwh
+    description: "Data warehouse tables (dimensions and facts)"
+    database: nba_analytics
+    schema: dwh
+    tables:
+      - name: dim_players
+        description: "Player dimension table"
+      - name: dim_teams
+        description: "Team dimension table"
+      - name: dim_seasons
+        description: "Season dimension table"
+      - name: dim_games
+        description: "Game dimension table"
