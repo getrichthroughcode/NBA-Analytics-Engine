@@ -290,12 +290,6 @@ jobs:
         echo "  - Running database migrations"
         echo "  - Updating monitoring/alerting"
     
-    # In a real deployment, you would add steps like:
-    # - Login to Docker registry
-    # - Push images
-    # - Deploy to cloud platform
-    # - Run smoke tests
-    # - Send notifications
 
   # Documentation
   docs:
