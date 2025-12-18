@@ -14,8 +14,8 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 setup(
     name="nba-analytics-engine",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Abdoulaye Diallo",
+    author_email="abdoulaye.diallo.eng@gmail.com",
     description="Full-stack NBA analytics platform with ETL, data warehouse, and ML predictions",
     long_description=long_description,
     long_description_content_type="text/markdown",
