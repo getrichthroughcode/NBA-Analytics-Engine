@@ -410,13 +410,12 @@ class AdvancedMetricsCalculator:
         
         return round(bpm, 1)
 
-
 def calculate_advanced_metrics(player_stats: List[Dict]) -> List[Dict]:
     """
     Calculate all advanced metrics for a list of player game stats.
     
     Args:
-        player_stats: List of player statistics dictionaries
+        player_stats: List of TRANSFORMED player statistics dictionaries
         
     Returns:
         Enhanced list with advanced metrics added
@@ -427,27 +426,32 @@ def calculate_advanced_metrics(player_stats: List[Dict]) -> List[Dict]:
     enhanced_stats = []
     
     for stats in player_stats:
-        # Extract base stats
-        points = stats.get('PTS', 0)
-        fgm = stats.get('FGM', 0)
-        fga = stats.get('FGA', 0)
-        fg3m = stats.get('FG3M', 0)
-        ftm = stats.get('FTM', 0)
-        fta = stats.get('FTA', 0)
-        oreb = stats.get('OREB', 0)
-        dreb = stats.get('DREB', 0)
-        reb = stats.get('REB', 0)
-        ast = stats.get('AST', 0)
-        stl = stats.get('STL', 0)
-        blk = stats.get('BLK', 0)
-        tov = stats.get('TOV', 0)
-        pf = stats.get('PF', 0)
-        min_played = stats.get('MIN', 0)
+        # Extract base stats - USE TRANSFORMED FIELD NAMES
+        points = stats.get('points', 0)
+        fgm = stats.get('field_goals_made', 0)
+        fga = stats.get('field_goals_attempted', 0)
+        fg3m = stats.get('three_pointers_made', 0)
+        ftm = stats.get('free_throws_made', 0)
+        fta = stats.get('free_throws_attempted', 0)
+        oreb = stats.get('offensive_rebounds', 0)
+        dreb = stats.get('defensive_rebounds', 0)
+        reb = stats.get('total_rebounds', 0)
+        ast = stats.get('assists', 0)
+        stl = stats.get('steals', 0)
+        blk = stats.get('blocks', 0)
+        tov = stats.get('turnovers', 0)
+        pf = stats.get('personal_fouls', 0)
+        min_played = stats.get('minutes_played', 0)
         
-        # Calculate advanced metrics
-        stats['TS_PCT'] = calculator.calculate_true_shooting_pct(points, fga, fta)
-        stats['EFG_PCT'] = calculator.calculate_effective_fg_pct(fgm, fg3m, fga)
-        stats['BPM'] = calculator.calculate_box_plus_minus(
+        # Calculate advanced metrics - USE SCHEMA FIELD NAMES
+        # Only override if not already calculated by API
+        if stats.get('true_shooting_pct') is None:
+            stats['true_shooting_pct'] = calculator.calculate_true_shooting_pct(points, fga, fta)
+        
+        if stats.get('effective_fg_pct') is None:
+            stats['effective_fg_pct'] = calculator.calculate_effective_fg_pct(fgm, fg3m, fga)
+        
+        stats['box_plus_minus'] = calculator.calculate_box_plus_minus(
             points, reb, ast, stl, blk, tov, fga, fgm, fta, min_played
         )
         
@@ -458,3 +462,4 @@ def calculate_advanced_metrics(player_stats: List[Dict]) -> List[Dict]:
     
     logger.info("Advanced metrics calculation complete")
     return enhanced_stats
+
