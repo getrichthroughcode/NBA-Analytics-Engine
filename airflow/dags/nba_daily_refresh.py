@@ -52,12 +52,11 @@ dag = DAG(
     "nba_daily_refresh",
     default_args=default_args,
     description="Daily NBA data pipeline - extract, transform, load, and analyze",
-    schedule_interval="0 2 * * *",  # 2 AM EST daily
+    schedule_interval="0 7 * * *",  # 7 AM UTC daily
     catchup=False,
     max_active_runs=1,
     tags=["nba", "daily", "production"],
 )
-
 
 def extract_yesterday_games(**context):
     """Extract all games and player stats from yesterday"""
@@ -74,12 +73,33 @@ def extract_yesterday_games(**context):
 
     # Extract player stats for each game
     all_player_stats = []
+    failed_games = []
+    
     for game in games:
         game_id = game["GAME_ID"]
-        player_stats = extractor.get_player_game_stats(game_id)
-        all_player_stats.extend(player_stats)
+        try:
+            player_stats = extractor.get_player_game_stats(game_id)
+            
+            if not player_stats:  # Empty list returned
+                logger.warning(f"No stats available for game {game_id} - may not be finished yet")
+                failed_games.append(game_id)
+                continue
+                
+            all_player_stats.extend(player_stats)
+            
+        except Exception as e:
+            logger.error(f"Failed to extract stats for game {game_id}: {str(e)}")
+            failed_games.append(game_id)
+            continue  # Skip this game but continue with others
 
     logger.info(f"Extracted stats for {len(all_player_stats)} player-game records")
+    
+    if failed_games:
+        logger.warning(f"Failed to get stats for {len(failed_games)} games: {failed_games}")
+    
+    # Don't fail the entire DAG if some games are missing
+    if len(all_player_stats) == 0 and len(games) > 0:
+        raise ValueError(f"No player stats available for any of {len(games)} games - they may not be finished yet")
 
     # Push data to XCom for next task
     context["task_instance"].xcom_push(key="games", value=games)
@@ -89,8 +109,8 @@ def extract_yesterday_games(**context):
         "date": target_date,
         "games_count": len(games),
         "player_stats_count": len(all_player_stats),
+        "failed_games": len(failed_games)
     }
-
 
 def transform_data(**context):
     """Transform raw data into clean, validated format"""
