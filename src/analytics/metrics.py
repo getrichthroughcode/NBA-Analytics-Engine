@@ -451,10 +451,7 @@ def calculate_advanced_metrics(player_stats: List[Dict]) -> List[Dict]:
         if stats.get('effective_fg_pct') is None:
             stats['effective_fg_pct'] = calculator.calculate_effective_fg_pct(fgm, fg3m, fga)
         
-        stats['box_plus_minus'] = calculator.calculate_box_plus_minus(
-            points, reb, ast, stl, blk, tov, fga, fgm, fta, min_played
-        )
-        
+                
         # Note: PER, Usage, WS require team-level data
         # These would be calculated in a separate aggregation step
         
