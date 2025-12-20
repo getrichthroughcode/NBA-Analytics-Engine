@@ -282,7 +282,7 @@ python scripts/data_quality.py
 
 ### Top 10 Players by PER (Current Season)
 ```sql
-SELECT 
+SELECT
     p.player_name,
     t.team_name,
     AVG(f.per) as avg_per,
@@ -300,7 +300,7 @@ LIMIT 10;
 ### Team Performance Trends
 ```sql
 WITH team_stats AS (
-    SELECT 
+    SELECT
         t.team_name,
         s.season_id,
         AVG(f.offensive_rating) as off_rtg,

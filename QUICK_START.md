@@ -95,7 +95,7 @@ docker-compose exec postgres psql -U postgres -d nba_analytics
 
 **Top 10 scorers this season:**
 ```sql
-SELECT 
+SELECT
     player_name,
     team_name,
     ppg,
@@ -108,7 +108,7 @@ LIMIT 10;
 
 **Team standings:**
 ```sql
-SELECT 
+SELECT
     team_name,
     wins,
     losses,

@@ -7,19 +7,20 @@ Loads NBA data for specified season range.
 Schedule: On-demand (manual trigger)
 """
 
-from datetime import datetime, timedelta
-from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.operators.bash import BashOperator
-
-import sys
 import os
+import sys
+from datetime import datetime, timedelta
+
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+
+from airflow import DAG
 
 sys.path.insert(0, os.path.abspath("/opt/airflow"))
 
 from src.etl.extractors.nba_extractor import NBAExtractor
-from src.etl.transformers.nba_transformer import NBATransformer
 from src.etl.loaders.postgres_loader import PostgresLoader
+from src.etl.transformers.nba_transformer import NBATransformer
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)

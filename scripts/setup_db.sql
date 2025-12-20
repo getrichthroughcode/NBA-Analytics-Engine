@@ -207,12 +207,12 @@ CREATE TABLE dwh.fact_player_game_stats (
     game_key INTEGER NOT NULL REFERENCES dwh.dim_games(game_key),
     season_key INTEGER NOT NULL REFERENCES dwh.dim_seasons(season_key),
     date_key INTEGER NOT NULL REFERENCES dwh.dim_date(date_key),
-    
+
     -- Game context
     is_starter BOOLEAN,
     is_home BOOLEAN,
     won_game BOOLEAN,
-    
+
     -- Basic stats
     minutes_played NUMERIC(5,1),
     points INTEGER,
@@ -231,12 +231,12 @@ CREATE TABLE dwh.fact_player_game_stats (
     turnovers INTEGER,
     personal_fouls INTEGER,
     plus_minus INTEGER,
-    
+
     -- Shooting percentages
     field_goal_pct NUMERIC(5,3),
     three_point_pct NUMERIC(5,3),
     free_throw_pct NUMERIC(5,3),
-    
+
     -- Advanced metrics
     true_shooting_pct NUMERIC(5,3),
     effective_fg_pct NUMERIC(5,3),
@@ -248,11 +248,11 @@ CREATE TABLE dwh.fact_player_game_stats (
     offensive_win_shares NUMERIC(5,2),
     defensive_win_shares NUMERIC(5,2),
     total_win_shares NUMERIC(5,2),
-    
+
     -- Metadata
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- Constraints
     UNIQUE (player_key, game_key)
 );
@@ -264,12 +264,12 @@ CREATE TABLE dwh.fact_team_game_stats (
     game_key INTEGER NOT NULL REFERENCES dwh.dim_games(game_key),
     season_key INTEGER NOT NULL REFERENCES dwh.dim_seasons(season_key),
     date_key INTEGER NOT NULL REFERENCES dwh.dim_date(date_key),
-    
+
     -- Game context
     is_home BOOLEAN,
     won_game BOOLEAN,
     opponent_team_key INTEGER REFERENCES dwh.dim_teams(team_key),
-    
+
     -- Team stats
     points INTEGER,
     field_goals_made INTEGER,
@@ -286,23 +286,23 @@ CREATE TABLE dwh.fact_team_game_stats (
     blocks INTEGER,
     turnovers INTEGER,
     personal_fouls INTEGER,
-    
+
     -- Four Factors
     effective_fg_pct NUMERIC(5,3),
     turnover_pct NUMERIC(5,1),
     offensive_rebound_pct NUMERIC(5,1),
     free_throw_rate NUMERIC(5,3),
-    
+
     -- Advanced metrics
     offensive_rating NUMERIC(5,1),
     defensive_rating NUMERIC(5,1),
     net_rating NUMERIC(5,1),
     pace NUMERIC(5,1),
-    
+
     -- Metadata
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- Constraints
     UNIQUE (team_key, game_key)
 );
@@ -343,7 +343,7 @@ CREATE INDEX idx_fact_team_stats_season ON dwh.fact_team_game_stats(season_key);
 
 -- Materialized View: Player Season Statistics
 CREATE MATERIALIZED VIEW analytics.mv_player_season_stats AS
-SELECT 
+SELECT
     p.player_key,
     p.player_name,
     t.team_name,
@@ -373,7 +373,7 @@ CREATE UNIQUE INDEX idx_mv_player_season ON analytics.mv_player_season_stats(pla
 -- Materialized View: League Leaders
 CREATE MATERIALIZED VIEW analytics.mv_league_leaders AS
 WITH ranked_stats AS (
-    SELECT 
+    SELECT
         player_key,
         season_id,
         ppg,

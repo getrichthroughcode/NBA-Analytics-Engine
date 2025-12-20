@@ -318,7 +318,7 @@ win_shares = calc.calculate_win_shares(
 **Shot Chart Analysis**
 ```sql
 -- Shooting zones analysis
-SELECT 
+SELECT
     player_name,
     shot_zone,
     COUNT(*) as attempts,
@@ -336,7 +336,7 @@ ORDER BY attempts DESC;
 **Clutch Performance**
 ```sql
 -- Performance in clutch time (last 5 minutes, score within 5)
-SELECT 
+SELECT
     p.player_name,
     COUNT(*) as clutch_games,
     AVG(f.points) as clutch_ppg,
@@ -525,7 +525,7 @@ docker-compose logs airflow-scheduler | grep ERROR
 **Database Maintenance:**
 ```sql
 -- Check table sizes
-SELECT 
+SELECT
     schemaname,
     tablename,
     pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
@@ -543,13 +543,13 @@ VACUUM ANALYZE fact_team_game_stats;
 **Query Optimization:**
 ```sql
 -- Create covering indexes for common queries
-CREATE INDEX idx_player_stats_covering 
-ON fact_player_game_stats(season_key, player_key) 
+CREATE INDEX idx_player_stats_covering
+ON fact_player_game_stats(season_key, player_key)
 INCLUDE (points, assists, rebounds);
 
 -- Partition large tables by season
-CREATE TABLE fact_player_game_stats_2024 
-PARTITION OF fact_player_game_stats 
+CREATE TABLE fact_player_game_stats_2024
+PARTITION OF fact_player_game_stats
 FOR VALUES IN ('2024-25');
 ```
 
