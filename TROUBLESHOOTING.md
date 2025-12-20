@@ -112,7 +112,7 @@ docker-compose restart airflow-webserver airflow-scheduler
 ```bash
 # On Mac/Linux
 lsof -i :8080  # Airflow
-lsof -i :8501  # Streamlit  
+lsof -i :8501  # Streamlit
 lsof -i :5432  # PostgreSQL
 
 # On Windows PowerShell

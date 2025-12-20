@@ -5,25 +5,24 @@ Handles extraction of NBA data from the official NBA API using nba_api library.
 Implements retry logic, rate limiting, and error handling.
 """
 
-from typing import List, Dict, Optional, Any
-from datetime import datetime, timedelta
 import time
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
 import pandas as pd
 from nba_api.stats.endpoints import (
-    leaguegamefinder,
-    boxscoretraditionalv3,
     boxscoreadvancedv3,
-    playergamelog,
-    teamgamelog,
-    leaguestandingsv3,
+    boxscoretraditionalv3,
     commonteamroster,
-    commonplayerinfo,
+    leaguegamefinder,
+    leaguestandingsv3,
     playercareerstats,
+    playergamelog,
 )
-from nba_api.stats.static import teams, players
+from nba_api.stats.static import players, teams
 
-from src.utils.logger import get_logger
 from src.utils.config import Config
+from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -65,9 +64,7 @@ class NBAExtractor:
         if self.request_count >= self.rate_limit:
             sleep_time = 60 - (current_time - self.last_reset)
             if sleep_time > 0:
-                logger.warning(
-                    f"Rate limit reached. Sleeping for {sleep_time:.2f} seconds"
-                )
+                logger.warning(f"Rate limit reached. Sleeping for {sleep_time:.2f} seconds")
                 time.sleep(sleep_time)
                 self.request_count = 0
                 self.last_reset = time.time()
@@ -125,9 +122,7 @@ class NBAExtractor:
         Returns:
             List of player dictionaries with metadata
         """
-        logger.info(
-            f"Fetching {'current season' if is_only_current_season else 'all'} players"
-        )
+        logger.info(f"Fetching {'current season' if is_only_current_season else 'all'} players")
         all_players = players.get_players()
 
         if is_only_current_season:
@@ -192,27 +187,21 @@ class NBAExtractor:
         )
 
         # Get advanced box score
-        advanced = self._retry_request(
-            boxscoreadvancedv3.BoxScoreAdvancedV3, game_id=game_id
-        )
+        advanced = self._retry_request(boxscoreadvancedv3.BoxScoreAdvancedV3, game_id=game_id)
 
         # Merge traditional and advanced stats
         trad_df = traditional.get_data_frames()[0]
         adv_df = advanced.get_data_frames()[0]
 
         # Merge on player_id
-        merged_df = pd.merge(
-            trad_df, adv_df, on=["teamId", "personId"], suffixes=("", "_adv")
-        )
+        merged_df = pd.merge(trad_df, adv_df, on=["teamId", "personId"], suffixes=("", "_adv"))
 
         stats = merged_df.to_dict("records")
         logger.info(f"Retrieved stats for {len(stats)} players in game {game_id}")
 
         return stats
 
-    def get_player_season_stats(
-        self, player_id: int, season: str = "2024-25"
-    ) -> List[Dict]:
+    def get_player_season_stats(self, player_id: int, season: str = "2024-25") -> List[Dict]:
         """
         Get all game logs for a player in a season.
 
@@ -247,9 +236,7 @@ class NBAExtractor:
         """
         logger.info(f"Fetching career stats for player {player_id}")
 
-        career = self._retry_request(
-            playercareerstats.PlayerCareerStats, player_id=player_id
-        )
+        career = self._retry_request(playercareerstats.PlayerCareerStats, player_id=player_id)
 
         # Get different career stat types
         career_totals = career.get_data_frames()[0]
@@ -257,9 +244,7 @@ class NBAExtractor:
 
         result = {
             "player_id": player_id,
-            "career_totals": career_totals.to_dict("records")[0]
-            if not career_totals.empty
-            else {},
+            "career_totals": career_totals.to_dict("records")[0] if not career_totals.empty else {},
             "season_stats": season_totals.to_dict("records"),
         }
 
@@ -353,9 +338,7 @@ class NBAExtractor:
         Returns:
             Dictionary with extraction summary
         """
-        logger.info(
-            f"Starting historical data extraction: {start_season} to {end_season}"
-        )
+        logger.info(f"Starting historical data extraction: {start_season} to {end_season}")
 
         # This is a placeholder - full implementation would be quite extensive
         # and would need to handle the large volume of data carefully

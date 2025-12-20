@@ -21,7 +21,7 @@ sources:
             description: "Team identifier"
             tests:
               - not_null
-      
+
       - name: team_game_stats_raw
         description: "Raw team game statistics from NBA API"
         columns:

@@ -7,9 +7,10 @@ Schedule: Weekly on Sundays
 """
 
 from datetime import datetime, timedelta
-from airflow import DAG
+
 from airflow.operators.python import PythonOperator
 
+from airflow import DAG
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)

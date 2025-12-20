@@ -4,9 +4,8 @@ NBA Data Transformer
 Transforms raw NBA API data into clean, validated format.
 """
 import json
-import pandas as pd
-from typing import List, Dict, Any
 from datetime import datetime
+from typing import Dict, List
 
 from src.utils.logger import get_logger
 
@@ -69,9 +68,7 @@ class NBATransformer:
                 }
                 transformed.append(cleaned_game)
             except Exception as e:
-                logger.warning(
-                    f"Failed to transform game {game.get('GAME_ID')}: {str(e)}"
-                )
+                logger.warning(f"Failed to transform game {game.get('GAME_ID')}: {str(e)}")
                 continue
 
         logger.info(f"Successfully transformed {len(transformed)} games")
@@ -102,7 +99,9 @@ class NBATransformer:
                     "game_id": str(stat.get("gameId")),
                     "team_id": int(stat.get("teamId", 0)),
                     "player_id": int(stat.get("personId", 0)),
-                    "player_name": f"{stat.get('firstName', '')} {stat.get('familyName', '')}".strip(),
+                    "player_name": (
+                        f"{stat.get('firstName', '')} {stat.get('familyName', '')}".strip()
+                    ),
                     # Player details
                     "position": stat.get("position", ""),
                     "jersey_num": stat.get("jerseyNum", ""),
@@ -113,9 +112,7 @@ class NBATransformer:
                     "field_goals_attempted": int(stat.get("fieldGoalsAttempted", 0)),
                     "field_goal_pct": float(stat.get("fieldGoalsPercentage", 0.0)),
                     "three_pointers_made": int(stat.get("threePointersMade", 0)),
-                    "three_pointers_attempted": int(
-                        stat.get("threePointersAttempted", 0)
-                    ),
+                    "three_pointers_attempted": int(stat.get("threePointersAttempted", 0)),
                     "three_point_pct": float(stat.get("threePointersPercentage", 0.0)),
                     "free_throws_made": int(stat.get("freeThrowsMade", 0)),
                     "free_throws_attempted": int(stat.get("freeThrowsAttempted", 0)),
@@ -147,9 +144,7 @@ class NBATransformer:
                     "true_shooting_pct": float(stat.get("trueShootingPercentage", 0.0))
                     if stat.get("trueShootingPercentage")
                     else None,
-                    "effective_fg_pct": float(
-                        stat.get("effectiveFieldGoalPercentage", 0.0)
-                    )
+                    "effective_fg_pct": float(stat.get("effectiveFieldGoalPercentage", 0.0))
                     if stat.get("effectiveFieldGoalPercentage")
                     else None,
                     "usage_pct": float(stat.get("usagePercentage", 0.0))
@@ -168,14 +163,10 @@ class NBATransformer:
                     if stat.get("assistRatio")
                     else None,
                     # Rebound metrics
-                    "offensive_rebound_pct": float(
-                        stat.get("offensiveReboundPercentage", 0.0)
-                    )
+                    "offensive_rebound_pct": float(stat.get("offensiveReboundPercentage", 0.0))
                     if stat.get("offensiveReboundPercentage")
                     else None,
-                    "defensive_rebound_pct": float(
-                        stat.get("defensiveReboundPercentage", 0.0)
-                    )
+                    "defensive_rebound_pct": float(stat.get("defensiveReboundPercentage", 0.0))
                     if stat.get("defensiveReboundPercentage")
                     else None,
                     "rebound_percentage": float(stat.get("reboundPercentage", 0.0))
@@ -220,7 +211,7 @@ class NBATransformer:
             seconds = int(parts[1])
 
             return round(minutes + (seconds / 60.0), 2)
-        except:
+        except Exception:
             return 0.0
 
     def _parse_date(self, date_str: str) -> str:
@@ -250,31 +241,6 @@ class NBATransformer:
         except Exception as e:
             logger.error(f"Error parsing date {date_str}: {str(e)}")
             return None
-
-    def _parse_minutes(self, minutes_str: str) -> float:
-        """
-        Parse minutes string (MM:SS) to decimal minutes.
-
-        Args:
-            minutes_str: Minutes in MM:SS format
-
-        Returns:
-            Minutes as float
-        """
-        if not minutes_str or minutes_str == "0":
-            return 0.0
-
-        try:
-            if ":" in str(minutes_str):
-                parts = str(minutes_str).split(":")
-                minutes = int(parts[0])
-                seconds = int(parts[1])
-                return round(minutes + seconds / 60.0, 1)
-            else:
-                return float(minutes_str)
-        except Exception as e:
-            logger.warning(f"Could not parse minutes: {minutes_str}")
-            return 0.0
 
     def validate_data(self, data: List[Dict], required_fields: List[str]) -> bool:
         """

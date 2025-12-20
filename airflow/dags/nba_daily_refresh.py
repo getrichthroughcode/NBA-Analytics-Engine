@@ -12,23 +12,24 @@ Daily orchestration of NBA data pipeline:
 Schedule: Daily at 2 AM EST (after games conclude)
 """
 
+import os
+import sys
 from datetime import datetime, timedelta
-from airflow import DAG
-from airflow.operators.python import PythonOperator
+
 from airflow.operators.bash import BashOperator
-from airflow.providers.postgres.operators.postgres import PostgresOperator
+from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.utils.dates import days_ago
 
-import sys
-import os
+from airflow import DAG
 
 sys.path.insert(0, os.path.abspath("/opt/airflow"))
 
-from src.etl.extractors.nba_extractor import NBAExtractor
-from src.etl.transformers.nba_transformer import NBATransformer
-from src.etl.loaders.postgres_loader import PostgresLoader
 from src.analytics.metrics import calculate_advanced_metrics
+from src.etl.extractors.nba_extractor import NBAExtractor
+from src.etl.loaders.postgres_loader import PostgresLoader
+from src.etl.transformers.nba_transformer import NBATransformer
 from src.utils.data_quality import run_data_quality_checks
 from src.utils.logger import get_logger
 
@@ -58,6 +59,7 @@ dag = DAG(
     tags=["nba", "daily", "production"],
 )
 
+
 def extract_yesterday_games(**context):
     """Extract all games and player stats from yesterday"""
     logger.info("Starting daily extraction for yesterday's games")
@@ -74,32 +76,38 @@ def extract_yesterday_games(**context):
     # Extract player stats for each game
     all_player_stats = []
     failed_games = []
-    
+
     for game in games:
         game_id = game["GAME_ID"]
         try:
             player_stats = extractor.get_player_game_stats(game_id)
-            
+
             if not player_stats:  # Empty list returned
-                logger.warning(f"No stats available for game {game_id} - may not be finished yet")
+                logger.warning(
+                    f"No stats available for game {game_id} - may not be finished yet"
+                )
                 failed_games.append(game_id)
                 continue
-                
+
             all_player_stats.extend(player_stats)
-            
+
         except Exception as e:
             logger.error(f"Failed to extract stats for game {game_id}: {str(e)}")
             failed_games.append(game_id)
             continue  # Skip this game but continue with others
 
     logger.info(f"Extracted stats for {len(all_player_stats)} player-game records")
-    
+
     if failed_games:
-        logger.warning(f"Failed to get stats for {len(failed_games)} games: {failed_games}")
-    
+        logger.warning(
+            f"Failed to get stats for {len(failed_games)} games: {failed_games}"
+        )
+
     # Don't fail the entire DAG if some games are missing
     if len(all_player_stats) == 0 and len(games) > 0:
-        raise ValueError(f"No player stats available for any of {len(games)} games - they may not be finished yet")
+        raise ValueError(
+            f"No player stats available for any of {len(games)} games - they may not be finished yet"
+        )
 
     # Push data to XCom for next task
     context["task_instance"].xcom_push(key="games", value=games)
@@ -109,8 +117,9 @@ def extract_yesterday_games(**context):
         "date": target_date,
         "games_count": len(games),
         "player_stats_count": len(all_player_stats),
-        "failed_games": len(failed_games)
+        "failed_games": len(failed_games),
     }
+
 
 def transform_data(**context):
     """Transform raw data into clean, validated format"""

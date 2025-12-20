@@ -4,11 +4,13 @@ PostgreSQL Data Loader
 Loads transformed data into PostgreSQL database.
 """
 
-import pandas as pd
-from typing import List, Dict, Any
 from datetime import datetime
-from src.utils.logger import get_logger
+from typing import Dict, List
+
+import pandas as pd
+
 from src.utils.database import DatabaseConnection
+from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -95,9 +97,7 @@ class PostgresLoader:
             logger.error(f"Failed to load player stats: {str(e)}")
             raise
 
-    def load_to_dimension(
-        self, data: List[Dict], table_name: str, schema: str = "dwh"
-    ) -> int:
+    def load_to_dimension(self, data: List[Dict], table_name: str, schema: str = "dwh") -> int:
         """
         Load data into dimension table with SCD Type 2 logic.
 
@@ -135,9 +135,7 @@ class PostgresLoader:
             logger.error(f"Failed to load dimension data: {str(e)}")
             raise
 
-    def load_to_fact(
-        self, data: List[Dict], table_name: str, schema: str = "dwh"
-    ) -> int:
+    def load_to_fact(self, data: List[Dict], table_name: str, schema: str = "dwh") -> int:
         """
         Load data into fact table.
 

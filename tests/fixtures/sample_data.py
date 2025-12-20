@@ -7,10 +7,10 @@ Provides realistic NBA stat data for testing.
 def get_sample_raw_player_stat():
     """
     Sample raw player stat from NBA API (before transformation).
-    
+
     This represents what comes directly from the NBA API.
     Uses the actual field names from the API.
-    
+
     Returns:
         Dictionary with raw API field names
     """
@@ -49,18 +49,18 @@ def get_sample_raw_player_stat():
         "effectiveFieldGoalPercentage": 0.650,
         "usagePercentage": 0.285,
         "pace": 98.5,
-        "PIE": 0.215
+        "PIE": 0.215,
     }
 
 
 def get_sample_transformed_player_stat():
     """
     Sample transformed player stat (after transformation).
-    
+
     This represents data after going through NBATransformer.
     Uses your database schema field names.
     Includes all metrics already calculated by the API.
-    
+
     Returns:
         Dictionary with transformed field names matching your schema
     """
@@ -106,20 +106,20 @@ def get_sample_transformed_player_stat():
         "defensive_rebound_pct": None,
         "rebound_percentage": None,
         "turnover_ratio": None,
-        "raw_data": "{}"
+        "raw_data": "{}",
     }
 
 
 def get_sample_transformed_stat_without_ts():
     """
     Sample transformed stat with missing true_shooting_pct and effective_fg_pct.
-    
+
     This simulates cases where the NBA API doesn't provide these metrics,
     forcing your code to calculate them.
-    
+
     Used to test that calculate_advanced_metrics() properly calculates
     missing metrics.
-    
+
     Returns:
         Dictionary with None values for calculated metrics
     """
@@ -132,9 +132,9 @@ def get_sample_transformed_stat_without_ts():
 def get_sample_minimal_stat():
     """
     Minimal player stat with only required fields.
-    
+
     Used to test that your code handles missing optional fields.
-    
+
     Returns:
         Dictionary with minimal required fields
     """
@@ -157,9 +157,9 @@ def get_sample_minimal_stat():
 def get_sample_zero_stats():
     """
     Player stat with all zeros (DNP - Did Not Play scenario).
-    
+
     Used to test edge cases where player didn't play.
-    
+
     Returns:
         Dictionary with zero values
     """
@@ -193,9 +193,9 @@ def get_sample_zero_stats():
 def get_sample_game_data():
     """
     Sample game data from NBA API.
-    
+
     Used to test game-level extractors and transformers.
-    
+
     Returns:
         Dictionary with game information
     """
@@ -206,17 +206,17 @@ def get_sample_game_data():
         "VISITOR_TEAM_ID": 1610612738,
         "SEASON": "2024-25",
         "HOME_TEAM_SCORE": 115,
-        "VISITOR_TEAM_SCORE": 108
+        "VISITOR_TEAM_SCORE": 108,
     }
 
 
 def get_sample_team_stats():
     """
     Sample team-level stats.
-    
+
     Used to test calculations that require team context
     (like usage rate, team ratings, etc.).
-    
+
     Returns:
         Dictionary with team statistics
     """
@@ -230,5 +230,5 @@ def get_sample_team_stats():
         "team_oreb": 10,
         "team_dreb": 35,
         "team_points": 115,
-        "team_ast": 25
+        "team_ast": 25,
     }
