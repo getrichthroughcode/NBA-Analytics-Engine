@@ -4,8 +4,14 @@
   )
 }}
 
+/*
+Staging: Team Game Stats
+=========================
+Cleans and standardizes raw team game statistics.
+*/
+
 WITH source AS (
-    SELECT * FROM {{ source('staging', 'player_game_stats_raw') }}
+    SELECT * FROM {{ source('staging', 'team_game_stats_raw') }}
 ),
 
 cleaned AS (
@@ -13,57 +19,36 @@ cleaned AS (
         -- IDs
         game_id,
         team_id,
-        player_id,
-        player_name,
-        position,
+        team_name,
 
-        -- Playing time
-        COALESCE(minutes_played, 0) as minutes_played,
+        -- Game info
+        game_date,
+        matchup,
+        is_home,
+        win_loss,
 
-        -- Scoring
-        COALESCE(points, 0) as points,
+        -- Stats
         COALESCE(field_goals_made, 0) as field_goals_made,
         COALESCE(field_goals_attempted, 0) as field_goals_attempted,
         COALESCE(three_pointers_made, 0) as three_pointers_made,
         COALESCE(three_pointers_attempted, 0) as three_pointers_attempted,
         COALESCE(free_throws_made, 0) as free_throws_made,
         COALESCE(free_throws_attempted, 0) as free_throws_attempted,
-
-        -- Rebounds
         COALESCE(offensive_rebounds, 0) as offensive_rebounds,
         COALESCE(defensive_rebounds, 0) as defensive_rebounds,
         COALESCE(total_rebounds, 0) as total_rebounds,
-
-        -- Other stats
         COALESCE(assists, 0) as assists,
         COALESCE(steals, 0) as steals,
         COALESCE(blocks, 0) as blocks,
         COALESCE(turnovers, 0) as turnovers,
         COALESCE(personal_fouls, 0) as personal_fouls,
-        COALESCE(plus_minus, 0) as plus_minus,
-
-        -- Advanced metrics (ADD THESE!)
-        offensive_rating,
-        defensive_rating,
-        net_rating,
-        true_shooting_pct,
-        effective_fg_pct,
-        usage_pct,
-        pace,
-        pie,
-        assist_percentage,
-        assist_to_turnover,
-        assist_ratio,
-        offensive_rebound_pct,
-        defensive_rebound_pct,
-        rebound_percentage,
-        turnover_ratio,
+        COALESCE(points, 0) as points,
 
         -- Metadata
         load_timestamp
 
     FROM source
-    WHERE player_id IS NOT NULL
+    WHERE team_id IS NOT NULL
       AND game_id IS NOT NULL
 )
 
