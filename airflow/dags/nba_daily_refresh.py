@@ -223,14 +223,14 @@ load_task = PythonOperator(
 # dbt run - transform staging to marts
 dbt_run_task = BashOperator(
     task_id="dbt_run",
-    bash_command="cd /opt/airflow/dbt && dbt run --profiles-dir /root/.dbt",
+    bash_command="cd /opt/airflow/dbt && dbt run --profiles-dir /home/airflow/.dbt",
     dag=dag,
 )
 
 # dbt test - validate data
 dbt_test_task = BashOperator(
     task_id="dbt_test",
-    bash_command="cd /opt/airflow/dbt && dbt test --profiles-dir /root/.dbt",
+    bash_command="cd /opt/airflow/dbt && dbt test --profiles-dir /home/airflow/.dbt",
     dag=dag,
 )
 
