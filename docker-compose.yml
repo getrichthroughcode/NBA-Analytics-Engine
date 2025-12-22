@@ -42,6 +42,7 @@ services:
       - ./airflow/plugins:/opt/airflow/plugins
       - ./airflow/config:/opt/airflow/config
       - ./src:/opt/airflow/src
+      - ./dbt:/opt/airflow/dbt
       - airflow_logs:/opt/airflow/logs
     depends_on:
       postgres:
@@ -72,6 +73,7 @@ services:
       - ./airflow/plugins:/opt/airflow/plugins
       - ./airflow/config:/opt/airflow/config
       - ./src:/opt/airflow/src
+      - ./dbt:/opt/airflow/dbt
       - airflow_logs:/opt/airflow/logs
     depends_on:
       postgres:
