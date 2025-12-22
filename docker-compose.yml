@@ -35,6 +35,11 @@ services:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__WEBSERVER__SECRET_KEY=${AIRFLOW_SECRET_KEY}
       - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - DATABASE_HOST=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=nba_analytics
     ports:
       - "8080:8080"
     volumes:
@@ -43,6 +48,7 @@ services:
       - ./airflow/config:/opt/airflow/config
       - ./src:/opt/airflow/src
       - ./dbt:/opt/airflow/dbt
+      - ./dbt/profiles.yml:/home/airflow/.dbt/profiles.yml
       - airflow_logs:/opt/airflow/logs
     depends_on:
       postgres:
@@ -68,12 +74,18 @@ services:
       - AIRFLOW__CORE__FERNET_KEY=${AIRFLOW_FERNET_KEY}
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - DATABASE_HOST=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=nba_analytics
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/plugins:/opt/airflow/plugins
       - ./airflow/config:/opt/airflow/config
       - ./src:/opt/airflow/src
       - ./dbt:/opt/airflow/dbt
+      - ./dbt/profiles.yml:/home/airflow/.dbt/profiles.yml
       - airflow_logs:/opt/airflow/logs
     depends_on:
       postgres:
