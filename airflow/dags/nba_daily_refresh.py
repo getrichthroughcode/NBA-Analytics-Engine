@@ -242,19 +242,6 @@ quality_check_task = PythonOperator(
     dag=dag,
 )
 
-# Refresh materialized views
-refresh_views_task = PostgresOperator(
-    task_id="refresh_materialized_views",
-    postgres_conn_id="nba_postgres",
-    sql="""
-        REFRESH MATERIALIZED VIEW CONCURRENTLY mv_player_season_stats;
-        REFRESH MATERIALIZED VIEW CONCURRENTLY mv_team_season_stats;
-        REFRESH MATERIALIZED VIEW CONCURRENTLY mv_player_career_stats;
-        REFRESH MATERIALIZED VIEW CONCURRENTLY mv_league_leaders;
-    """,
-    dag=dag,
-)
-
 # Update statistics for query optimization
 update_stats_task = PostgresOperator(
     task_id="update_table_statistics",
@@ -270,4 +257,4 @@ update_stats_task = PostgresOperator(
 
 # Define task dependencies
 extract_task >> transform_task >> load_task >> dbt_run_task >> dbt_test_task
-dbt_test_task >> quality_check_task >> refresh_views_task >> update_stats_task
+dbt_test_task >> quality_check_task >> update_stats_task
