@@ -247,14 +247,14 @@ update_stats_task = PostgresOperator(
     task_id="update_table_statistics",
     postgres_conn_id="nba_postgres",
     sql="""
-        ANALYZE fact_player_game_stats;
-        ANALYZE fact_team_game_stats;
-        ANALYZE dim_players;
-        ANALYZE dim_teams;
+        ANALYZE public_dwh.fact_player_game_stats;
+        ANALYZE public_dwh.fact_team_game_stats;
+        ANALYZE public_dwh.dim_players;
+        ANALYZE public_dwh.dim_teams;
+        ANALYZE public_analytics.player_season_stats;
     """,
     dag=dag,
 )
-
 # Define task dependencies
 extract_task >> transform_task >> load_task >> dbt_run_task >> dbt_test_task
 dbt_test_task >> quality_check_task >> update_stats_task
